@@ -1,42 +1,64 @@
 const getState = ({ getStore, getActions, setStore }) => {
 	return {
 		store: {
-			demo: [
-				{
-					title: "FIRST",
-					background: "white",
-					initial: "white"
-				},
-				{
-					title: "SECOND",
-					background: "white",
-					initial: "white"
-				}
-			]
+			characters: [],
+			planets: [],
+			vehicles: [],
+			favs: []
 		},
 		actions: {
-			// Use getActions to call a function within a fuction
-			exampleFunction: () => {
-				getActions().changeColor(0, "green");
+			getPeople: () => {
+				const fetchData = async () => {
+					try {
+						const response = await fetch("https://swapi.py4e.com/api/people/");
+						const data = await response.json();
+						const results = data.results;
+						setStore({ characters: results });
+					} catch (error) {
+						console.log(error);
+					}
+				};
+				fetchData();
 			},
-			loadSomeData: () => {
-				/**
-					fetch().then().then(data => setStore({ "foo": data.bar }))
-				*/
+			getPlanets: () => {
+				const fetchData = async () => {
+					try {
+						const response = await fetch("https://swapi.py4e.com/api/planets/");
+						const data = await response.json();
+						const results = data.results;
+						setStore({ planets: results });
+					} catch (error) {
+						console.log(error);
+					}
+				};
+				fetchData();
 			},
-			changeColor: (index, color) => {
-				//get the store
-				const store = getStore();
+			getVehicles: () => {
+				const fetchData = async () => {
+					try {
+						const response = await fetch("https://swapi.py4e.com/api/vehicles/");
+						const data = await response.json();
+						const results = data.results;
+						setStore({ vehicles: results });
+					} catch (error) {
+						console.log(error);
+					}
+				};
+				fetchData();
+			},
+			toggleFavs: (item, store) => {
 
-				//we have to loop the entire demo array to look for the respective index
-				//and change its color
-				const demo = store.demo.map((elm, i) => {
-					if (i === index) elm.background = color;
-					return elm;
-				});
+				const isInFavs = store.favs.includes(item);
+				if (!isInFavs) {
+					const updatedFavs = [...store.favs, item];
+					setStore({ ...store, favs: updatedFavs });
+				} else {
+					const updatedFavs = store.favs.filter(fav => fav !== item);
+					setStore({ ...store, favs: updatedFavs });
+				}
 
-				//reset the global store
-				setStore({ demo: demo });
+				console.log(store.favs);
+
 			}
 		}
 	};
